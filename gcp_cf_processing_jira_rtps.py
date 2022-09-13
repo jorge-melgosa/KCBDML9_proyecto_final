@@ -73,6 +73,7 @@ def processiong_anfix_addons_subscriptions(event, context):
         print("df.columns:{}".format(df_rtps.columns))
         print("The number of columns:{}".format(len(df_rtps.columns)))
 
+        df_rtps.reset_index(drop=True, inplace=True)
         blob_file_stock_result = BUCKET_DATA_LAKE.blob(NAME_FILE_RESULT)
         blob_file_stock_result.upload_from_string(df_rtps.to_csv(), 'text/csv')
         print("- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_RESULT, b=BUCKET_DATA_LAKE))

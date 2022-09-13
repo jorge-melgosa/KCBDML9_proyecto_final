@@ -57,14 +57,16 @@ def processiong_anfix_addons_subscriptions(event, context):
         print("df.columns:{}".format(df_addons_sto.columns))
         print("The number of columns:{}".format(len(df_addons_sto.columns)))
 
-        print("df Stock:{}".format(df_addons_pro))
+        print("df Proyectos:{}".format(df_addons_pro))
         print("df.columns:{}".format(df_addons_pro.columns))
         print("The number of columns:{}".format(len(df_addons_pro.columns)))
 
+        df_addons_sto.reset_index(drop=True, inplace=True)
         blob_file_stock_result = BUCKET_DATA_LAKE.blob(NAME_FILE_STOCK_RESULT)
         blob_file_stock_result.upload_from_string(df_addons_sto.to_csv(), 'text/csv')
         print("- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_STOCK_RESULT, b=BUCKET_DATA_LAKE))
 
+        df_addons_pro.reset_index(drop=True, inplace=True)
         blob_file_proyect_result = BUCKET_DATA_LAKE.blob(NAME_FILE_PROJECTS_RESULT)
         blob_file_proyect_result.upload_from_string(df_addons_pro.to_csv(), 'text/csv')
         print("- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_PROJECTS_RESULT, b=BUCKET_DATA_LAKE))

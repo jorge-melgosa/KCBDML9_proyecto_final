@@ -43,7 +43,7 @@ def processing_project(df_projects, df_result):
 
     # procesamos las suscripciones de proyectos
     for index, row in df_projects.iterrows():
-        df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_pro'] = int(1)
+        df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_pro'] = 1
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_pro_active'] = int(row["suscription_active"])
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_pro_id'] = row['doc_DirCommercialConfigId']
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_pro_start'] = row['doc_StartDate']
@@ -59,7 +59,7 @@ def processing_stock(df_stock, df_result):
     count = 1
     # procesamos las suscripciones de stock
     for index, row in df_stock.iterrows():
-        df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_sto'] = int(1)
+        df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_sto'] = 1
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_sto_active'] = int(row["suscription_active"])
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_sto_id'] = row['doc_DirCommercialConfigId']
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'addon_sto_start'] = row['doc_StartDate']
@@ -180,6 +180,7 @@ def processing_datalake_generate_client(event,context):
             print("The number of rows rtps: {}".format(df_rtps.shape[0]))
             df_result = processing_rtps(df_rtps, df_result)
 
+        df_result.reset_index(drop=True, inplace=True)
         # almacenamos el fichero de nuevo con las modificaciones encontradas
         blob_file_result.upload_from_string(df_result.to_csv(), 'text/csv')
         print("The number of rows result: {}".format(df_result.shape[0]))

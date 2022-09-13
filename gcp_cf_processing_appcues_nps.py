@@ -76,6 +76,7 @@ def processiong_anfix_addons_subscriptions(event, context):
         for companyId in companyIds:
             # nos vamos a quedar con la última entrada para el nps
             df_new = df_nps_raw.loc[df_nps_raw['attributes._identity.companyId'] == companyId].iloc[-1]
+            df_new = df_new.fillna('')
 
             new_row = {
                 'timestamp': df_new['timestamp'],
@@ -94,9 +95,11 @@ def processiong_anfix_addons_subscriptions(event, context):
         print("df.columns:{}".format(df_nps.columns))
         print("The number of columns:{}".format(len(df_nps.columns)))
 
+        df_nps.reset_index(drop=True, inplace=True)
         blob_file_stock_result = BUCKET_DATA_LAKE.blob(NAME_FILE_RESULT)
         blob_file_stock_result.upload_from_string(df_nps.to_csv(), 'text/csv')
-        print("- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_RESULT, b=BUCKET_DATA_LAKE))
+        print(
+            "- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_RESULT, b=BUCKET_DATA_LAKE))
 
     else:
         print("No hemos subido el archivo correcto.")

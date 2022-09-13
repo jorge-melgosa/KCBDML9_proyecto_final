@@ -26,7 +26,6 @@ def processiong_anfix_subscriptions(event, context):
 
     NAME_FILE_RESULT = 'DataSet_anfix_subscriptions.csv'
     NAME_FILE_ANFIXDB = 'DataSet_anfixdb_subscription.csv'
-    new_columns_df_anfix = ['score_nps', 'semaforo', 'addon_sto', 'addon_pro']
 
     # si hemos subido el archivo correcto
     if NAME_FILE_ANFIXDB == FILE_NAME:
@@ -38,22 +37,19 @@ def processiong_anfix_subscriptions(event, context):
         print("df:{}".format(df_anfix_db))
         print("df.columns:{}".format(df_anfix_db.columns))
         print("The number of columns:{}".format(len(df_anfix_db.columns)))
-        df_anfix = pd.DataFrame(columns=df_anfix_db.columns.union(new_columns_df_anfix))
+        df_anfix = pd.DataFrame(columns=df_anfix_db.columns)
 
         print('- Nos vamos a quedar con suscripción mas reciente de la compañia en Anfix.')
         companyIds = df_anfix_db.companyId.unique().tolist()
         for companyId in companyIds:
             new_row = df_anfix_db.loc[df_anfix_db['companyId'] == companyId].iloc[-1]
-            new_row['score_nps'] = ''
-            new_row['semaforo'] = ''
-            new_row['addon_sto'] = ''
-            new_row['addon_pro'] = ''
             df_anfix.loc[len(df_anfix.index)] = new_row
 
         print("df:{}".format(df_anfix))
         print("df.columns:{}".format(df_anfix.columns))
         print("The number of columns:{}".format(len(df_anfix.columns)))
 
+        df_anfix.reset_index(drop=True, inplace=True)
         blob_file_result = BUCKET_DATA_LAKE.blob(NAME_FILE_RESULT)
         blob_file_result.upload_from_string(df_anfix.to_csv(), 'text/csv')
 
