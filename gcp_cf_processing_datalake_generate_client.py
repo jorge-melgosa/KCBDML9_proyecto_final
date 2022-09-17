@@ -81,16 +81,16 @@ def processing_nps(df_nps, df_result):
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'nps_score'] = row["score"]
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'nps_prev_score'] = row['prev_nps_score']
         df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'nps_feedback'] = row['feedback']
+        df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'semaforo'] = ''
 
-        semaphore = ''
-        if 0 <= row['score'] <= 5:
-            semaphore = 'Rojo'
-        elif 6 <= row['score'] <= 8:
-            semaphore = 'Amarillo'
-        elif 9 <= row['score'] <= 10:
-            semaphore = 'Verde'
+#        semaphore = ''
+#        if 0 <= row['score'] <= 5:
+#            semaphore = 'Rojo'
+#        elif 6 <= row['score'] <= 8:
+#            semaphore = 'Amarillo'
+#        elif 9 <= row['score'] <= 10:
+#            semaphore = 'Verde'
 
-        df_anfix.loc[df_anfix['companyId'] == row['companyId'], 'semaforo'] = semaphore
         count += 1
     return df_anfix
 

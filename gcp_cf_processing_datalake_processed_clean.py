@@ -13,6 +13,7 @@ def processing_datalake_processed_clean(event, context):
 
     NAME_FILE = 'result_anfx_clients.csv'
     NAME_FILE_RESULT = 'result_anfx_clients_pro.csv'
+    NAME_FILE_NPS = 'result_anfix_clients_pro_nps.csv'
 
     if NAME_FILE == FILE_NAME:
         print("- Cargamos el DataFrame con los datos a limpiar.")
@@ -114,11 +115,38 @@ def processing_datalake_processed_clean(event, context):
             else:
                 exit_while = True
 
+        print("The number of columns:{}".format(len(df_anfix.columns)))
+        print("The number of row:{}".format(df_anfix.shape[0]))
+        print("df_anfix.columns:{}".format(df_anfix.columns))
+
         df_anfix.reset_index(drop=True, inplace=True)
         blob_file_result = BUCKET_DATA_LAKE_PROCESSED.blob(NAME_FILE_RESULT)
         blob_file_result.upload_from_string(df_anfix.to_csv(), 'text/csv')
 
         print("- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_RESULT, b=BUCKET_DATA_LAKE_PROCESSED))
+
+        columns = ['company-id', 'company-is-actived', 'company-name',
+                   'company-postal-code', 'company-province',
+                   'nps-feedback', 'nps-previous-score',
+                   'nps-score', 'nps-score-old', 'nps-score-semaphore',
+                   'organization-type',
+                   'subscription-active',
+                   'subscription-end-date',
+                   'subscription-expiration-date', 'subscription-id',
+                   'subscription-name',
+                   'subscription-start-date']
+        df_nps = df_anfix[columns]
+        df_nps = df_nps[~df_nps['nps-score'].isin([''])]
+        df_nps.reset_index(drop=True, inplace=True)
+
+        print("The number of columns (nps):{}".format(df_nps.shape[1]))
+        print("The number of row (nps):{}".format(df_nps.shape[0]))
+        print("df_nps.columns:{}".format(df_nps.columns))
+
+        blob_file_result_nps = BUCKET_DATA_LAKE_PROCESSED.blob(NAME_FILE_NPS)
+        blob_file_result_nps.upload_from_string(df_nps.to_csv(), 'text/csv')
+
+        print("- Archivo {a} almacenado correctamente en el Data Lake {b}".format(a=NAME_FILE_NPS, b=BUCKET_DATA_LAKE_PROCESSED))
 
     else:
         print("No hemos subido el archivo correcto.")
